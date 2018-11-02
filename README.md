@@ -1,9 +1,10 @@
 # Easy-LAB
 
 Look at Boundary: A Boundary-Aware Face Alignment Algorithm
+
 # Installing
 
-1.Download the **repo** below
+1.Download the **repo** below, as well as pretrained models
 
 2.Replace **Makefile.config**
 
