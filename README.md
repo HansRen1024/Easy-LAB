@@ -1,12 +1,13 @@
 # Easy-LAB
-Look at Boundary: A Boundary-Aware Face Alignment Algorithm
 
-'
-@inproceedings{wayne2018lab,
- author = {Wu, Wayne and Qian, Chen and Yang, Shuo and Wang, Quan and Cai, Yici and Zhou, Qiang},
- title = {Look at Boundary: A Boundary-Aware Face Alignment Algorithm},
- booktitle = {CVPR},
- month = June,
- year = {2018}
-}
-'
+Look at Boundary: A Boundary-Aware Face Alignment Algorithm
+# Installing
+
+1.Download the **repo** below
+2.Replace **Makefile.config**
+3.make all -j8
+4.run **compile.sh**
+
+# Reference
+
+https://github.com/wywu/LAB
