@@ -56,32 +56,28 @@ void NormalizeImage(Mat &img) {
 }
 int main(void) {
     string FLAGS_model_path="./models/";
-    int instance_num;
     caffe::Caffe::set_mode(caffe::Caffe::CPU);
-    instance_num=1;
     string imgPath = "./faceImg.jpg";
-    vector<caffe::shared_ptr<Net<float>>> deep_align(instance_num);
-    vector<caffe::shared_ptr<Blob<float>>> input_blob(instance_num);
-    vector<caffe::shared_ptr<Blob<float>>> output_blob(instance_num);
-    for(int i=0; i<instance_num; i++) {
-        deep_align[i].reset(new Net<float>(FLAGS_model_path+"rel.prototxt", TEST));
-        deep_align[i]->CopyTrainedLayersFrom(FLAGS_model_path+"model.bin");
-        input_blob[i]=deep_align[i]->blob_by_name("data");
-        output_blob[i]=deep_align[i]->blob_by_name("result");
+    caffe::shared_ptr<Net<float>> deep_align;
+    caffe::shared_ptr<Blob<float>> input_blob;
+    caffe::shared_ptr<Blob<float>> output_blob;
+    deep_align.reset(new Net<float>(FLAGS_model_path+"rel.prototxt", TEST));
+    deep_align->CopyTrainedLayersFrom(FLAGS_model_path+"model.bin");
+    input_blob=deep_align->blob_by_name("data");
+    output_blob=deep_align->blob_by_name("result");
+    Mat image=imread(imgPath);
+    cv::resize(image,image,cv::Size(256,256));
+    Mat show = image.clone();
+    ConvertImageToGray(image);
+    image.convertTo(image, CV_32F);
+    NormalizeImage(image);
+    Copy(image, *(input_blob));
+    deep_align->Forward();
+    vector<Point2f> landmark_98pt=ToPoints(ToVector(*(output_blob)));
+    for(uint i=0; i<landmark_98pt.size(); i++){
+        cv::circle(show,cv::Point(int(landmark_98pt[i].x),int(landmark_98pt[i].y)),0.1,cv::Scalar(0,255,0), 4, 8, 0);
     }
-	Mat image=imread(imgPath);
-	cv::resize(image,image,cv::Size(256,256));
-	Mat show = image.clone();
-	ConvertImageToGray(image);
-	image.convertTo(image, CV_32F);
-	NormalizeImage(image);
-	Copy(image, *(input_blob[0]));
-	deep_align[0]->Forward();
-	vector<Point2f> landmark_98pt=ToPoints(ToVector(*(output_blob[0])));
-	for(uint i=0; i<landmark_98pt.size(); i++){
-		cv::circle(show,cv::Point(int(landmark_98pt[i].x),int(landmark_98pt[i].y)),0.1,cv::Scalar(0,255,0), 4, 8, 0);
-	}
-	imshow("tracking", show);
-	waitKey(0);
+    imshow("tracking", show);
+    waitKey(0);
     return 0;
 }
